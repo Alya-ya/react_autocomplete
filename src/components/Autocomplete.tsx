@@ -81,7 +81,7 @@ export const Autocomplete: React.FC<Props> = ({
             {suggestions.length === 0 ? (
               <div
                 className="dropdown-item has-text-danger"
-                data-cy="no-suggestions-message" // вернули data-cy
+                data-cy="no-suggestions-message"
               >
                 No matching suggestions
               </div>
@@ -90,8 +90,8 @@ export const Autocomplete: React.FC<Props> = ({
                 <div
                   key={person.slug}
                   className="dropdown-item"
-                  data-cy="suggestion-item" // вернули data-cy
-                  onMouseDown={() => handleSelect(person)}
+                  data-cy="suggestion-item"
+                  onClick={() => handleSelect(person)}
                 >
                   <p className="has-text-link">{person.name}</p>
                 </div>
