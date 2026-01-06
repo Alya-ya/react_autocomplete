@@ -18,12 +18,13 @@ export const Autocomplete: React.FC<Props> = ({
   const [lastQuery, setLastQuery] = useState('');
 
   useEffect(() => {
-    if (query === lastQuery) {
+    const trimmedQuery = query.trim();
+
+    if (trimmedQuery === lastQuery) {
       return;
     }
 
     const timeoutId = setTimeout(() => {
-      const trimmedQuery = query.trim();
       let filtered: Person[];
 
       if (trimmedQuery) {
@@ -35,11 +36,24 @@ export const Autocomplete: React.FC<Props> = ({
       }
 
       setSuggestions(filtered);
-      setLastQuery(query);
+      setLastQuery(trimmedQuery);
     }, delay);
 
     return () => clearTimeout(timeoutId);
   }, [query, delay, people, lastQuery]);
+
+  const handleFocus = () => {
+    setIsOpen(true);
+    if (!query) {
+      setSuggestions(people);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+    setIsOpen(true);
+    onSelected(null);
+  };
 
   const handleSelect = (person: Person) => {
     setQuery(person.name);
@@ -56,17 +70,8 @@ export const Autocomplete: React.FC<Props> = ({
           placeholder="Enter a part of the name"
           value={query}
           data-cy="search-input"
-          onFocus={() => {
-            setIsOpen(true);
-            if (!query) {
-              setSuggestions(people);
-            }
-          }}
-          onChange={e => {
-            setQuery(e.target.value);
-            setIsOpen(true);
-            onSelected(null);
-          }}
+          onFocus={handleFocus}
+          onChange={handleChange}
         />
       </div>
 
@@ -76,7 +81,7 @@ export const Autocomplete: React.FC<Props> = ({
             {suggestions.length === 0 ? (
               <div
                 className="dropdown-item has-text-danger"
-                data-cy="no-suggestions-message"
+                data-cy="no-suggestions-message" // вернули data-cy
               >
                 No matching suggestions
               </div>
@@ -85,8 +90,8 @@ export const Autocomplete: React.FC<Props> = ({
                 <div
                   key={person.slug}
                   className="dropdown-item"
-                  data-cy="suggestion-item"
-                  onClick={() => handleSelect(person)}
+                  data-cy="suggestion-item" // вернули data-cy
+                  onMouseDown={() => handleSelect(person)}
                 >
                   <p className="has-text-link">{person.name}</p>
                 </div>
